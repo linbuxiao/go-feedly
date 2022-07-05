@@ -21,11 +21,13 @@ type Board struct {
 	StreamId       *string `json:"streamId,omitempty"`
 }
 
+type BoardsListResponse []Board
+
 // List Get the list of boards
-func (s *BoardsService) List(ctx context.Context) ([]Board, *resty.Response, error) {
-	var result []Board
-	resp, err := s.client.Client().R().SetResult(&result).SetContext(ctx).Get("/boards")
-	return result, resp, err
+func (s *BoardsService) List(ctx context.Context) (*BoardsListResponse, *resty.Response, error) {
+	var result BoardsListResponse
+	resp, err := s.client.Do(ctx, resty.MethodGet, "/boards", nil, &result)
+	return &result, resp, err
 }
 
 type BoardsUpdateOneRequest struct {
@@ -39,5 +41,5 @@ type BoardsUpdateOneRequest struct {
 
 // UpdateOne Update a board
 func (s *BoardsService) UpdateOne(ctx context.Context, params *BoardsUpdateOneRequest) (*resty.Response, error) {
-	return s.client.Client().R().SetContext(ctx).SetBody(params).Post("/boards")
+	return s.client.Do(ctx, resty.MethodPost, "/boards", params, nil)
 }

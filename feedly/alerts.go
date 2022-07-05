@@ -35,6 +35,6 @@ type LayerPart struct {
 // List Get the list of web alerts (Pro+ and Enterprise only)
 func (s *AlertsService) List(ctx context.Context) (*AlertsListResponse, *resty.Response, error) {
 	var result AlertsListResponse
-	resp, err := s.client.Client().R().SetResult(&result).SetContext(ctx).Get("/alerts")
+	resp, err := s.client.Do(ctx, resty.MethodGet, "/alerts", nil, &result)
 	return &result, resp, err
 }

@@ -1,6 +1,7 @@
 package feedly
 
 import (
+	"context"
 	"github.com/go-resty/resty/v2"
 	"sync"
 )
@@ -31,6 +32,20 @@ func (c *Client) Client() *resty.Client {
 	defer c.clientMu.Unlock()
 	clientCopy := *c.client
 	return &clientCopy
+}
+
+func (c *Client) Do(ctx context.Context, method string,
+	url string, body interface{}, v interface{},
+) (*resty.Response, error) {
+	r := c.Client().R().SetContext(ctx)
+	if body != nil {
+		r.SetBody(body)
+	}
+	if v != nil {
+		r.SetResult(&v)
+	}
+	resp, err := r.Execute(method, url)
+	return resp, err
 }
 
 func NewClient(options ...ClientOption) *Client {
