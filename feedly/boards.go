@@ -24,10 +24,10 @@ type Board struct {
 type BoardsListResponse []Board
 
 // List Get the list of boards
-func (s *BoardsService) List(ctx context.Context) (*BoardsListResponse, *resty.Response, error) {
+func (s *BoardsService) List(ctx context.Context) (BoardsListResponse, *resty.Response, error) {
 	var result BoardsListResponse
 	resp, err := s.client.Do(ctx, resty.MethodGet, "/boards", nil, &result)
-	return &result, resp, err
+	return result, resp, err
 }
 
 type BoardsUpdateOneRequest struct {
