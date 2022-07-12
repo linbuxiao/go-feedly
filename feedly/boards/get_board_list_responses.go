@@ -15,16 +15,16 @@ import (
 	"github.com/linbuxiao/go-feedly/models"
 )
 
-// GetBoardsReader is a Reader for the GetBoards structure.
-type GetBoardsReader struct {
+// GetBoardListReader is a Reader for the GetBoardList structure.
+type GetBoardListReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetBoardsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetBoardListReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewGetBoardsOK()
+		result := NewGetBoardListOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -34,27 +34,27 @@ func (o *GetBoardsReader) ReadResponse(response runtime.ClientResponse, consumer
 	}
 }
 
-// NewGetBoardsOK creates a GetBoardsOK with default headers values
-func NewGetBoardsOK() *GetBoardsOK {
-	return &GetBoardsOK{}
+// NewGetBoardListOK creates a GetBoardListOK with default headers values
+func NewGetBoardListOK() *GetBoardListOK {
+	return &GetBoardListOK{}
 }
 
-/* GetBoardsOK describes a response with status code 200, with default header values.
+/* GetBoardListOK describes a response with status code 200, with default header values.
 
-Get the list of boards
+Success
 */
-type GetBoardsOK struct {
+type GetBoardListOK struct {
 	Payload []*models.Board
 }
 
-func (o *GetBoardsOK) Error() string {
-	return fmt.Sprintf("[GET /boards][%d] getBoardsOK  %+v", 200, o.Payload)
+func (o *GetBoardListOK) Error() string {
+	return fmt.Sprintf("[GET /boards][%d] getBoardListOK  %+v", 200, o.Payload)
 }
-func (o *GetBoardsOK) GetPayload() []*models.Board {
+func (o *GetBoardListOK) GetPayload() []*models.Board {
 	return o.Payload
 }
 
-func (o *GetBoardsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetBoardListOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response payload
 	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {

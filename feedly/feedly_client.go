@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"github.com/linbuxiao/go-feedly/feedly/boards"
+	"github.com/linbuxiao/go-feedly/feedly/collections"
 )
 
 // Default feedly HTTP client.
@@ -56,6 +57,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Feedly {
 	cli := new(Feedly)
 	cli.Transport = transport
 	cli.Boards = boards.New(transport, formats)
+	cli.Collections = collections.New(transport, formats)
 	return cli
 }
 
@@ -102,6 +104,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type Feedly struct {
 	Boards boards.ClientService
 
+	Collections collections.ClientService
+
 	Transport runtime.ClientTransport
 }
 
@@ -109,4 +113,5 @@ type Feedly struct {
 func (c *Feedly) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 	c.Boards.SetTransport(transport)
+	c.Collections.SetTransport(transport)
 }

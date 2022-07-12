@@ -15,6 +15,8 @@ securityDefinitions:
     type: apiKey
     name: Authorization
     in: header
+security:
+  - key: []
 definitions:
   Board:
     type: object
@@ -62,32 +64,142 @@ definitions:
       description:
         type: string
 
+  Feed:
+    type: object
+    required:
+      - id
+      - title
+      - added
+      - updated
+      - velocity
+      - numReadEntriesPastMonth
+      - numLongReadEntriesPastMonth
+      - totalReadingTimePastMonth
+      - numTaggedEntriesPastMonth
+      - categories
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      added:
+        type: integer
+      updated:
+        type: integer
+      website:
+        type: string
+      visualUrl:
+        type: string
+      velocity:
+        type: number
+      numReadEntriesPastMonth:
+        type: integer
+      numLongReadEntriesPastMonth:
+        type: integer
+      totalReadingTimePastMonth:
+        type: integer
+      numTaggedEntriesPastMonth:
+        type: integer
+      categories:
+        type: array
+        items:
+          $ref: "#/definitions/FeedCategory"
+
+  FeedCategory:
+    type: object
+    required:
+      - id
+      - label
+    properties:
+      id:
+        type: string
+      label:
+        type: string
+
+
+  Collection:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      label:
+        type: string
+      description:
+        type: string
+      cover:
+        type: string
+      created:
+        type: integer
+      feeds:
+        type: array
+        items:
+          $ref: "#/definitions/Feed"
+
+  CreateOrUpdateCollection:
+    type: object
+    required:
+      - label
+    properties:
+      id:
+        type: string
+      label:
+        type: string
+      description:
+        type: string
+      feeds:
+        type: array
+        items:
+          $ref: "#/definitions/CreateCollectionFeed"
+      deleteCover:
+        type: boolean
+
+  CreateCollectionFeed:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+
 paths:
+  # boards
   /boards:
     get:
+      description: Get the list of boards
+      operationId: GetBoardList
       tags:
         - boards
       responses:
         200:
-          description: Get the list of boards
+          description: Success
           schema:
             type: array
             items:
               $ref: "#/definitions/Board"
     post:
+      parameters:
+      - name: updateBoard
+        in: body
+        schema:
+          type: object
+          $ref:  "#/definitions/UpdateBoard"
+      description: Update a board
+      operationId: UpdateBoard
       tags:
         - boards
       responses:
         200:
-          description: Update a board
-          schema:
-            type: object
-            $ref:  "#/definitions/UpdateBoard"
+          description: Success
         403:
           description: the board id passed doesn’t match the logged-in user id
 
   /boards/{tagId}:
-    parameters:
+    post:
+      parameters:
       - name: tagId
         in: path
         required: true
@@ -96,12 +208,57 @@ paths:
         in: formData
         type: file
         required: true
-    post:
+      description: Upload a new cover image
+      operationId: UploadNewBoardCover
       tags:
         - boards
       responses:
         200:
-          description: Upload a new cover image
+          description: Success
+
+  # collections
+  /collections:
+    get:
+      tags:
+        - collections
+      description: Get the list of personal collections
+      operationId: GetFeedCollections
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Collection"
+    post:
+      tags:
+        - collections
+      parameters:
+      - name: CreateOrUpdateCollection
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/CreateCollectionFeed"
+      operationId: CreateOrUpdateCollection
+      description: Create or update a personal collection
+      responses:
+        200:
+          description: Success
+
+  /collections/{collectionId}:
+    get:
+      parameters:
+      - name: collectionId
+        in: path
+        required: true
+        type: string
+      tags:
+       - collections
+      description: Get details about a personal collection
+      operationId: GetPersonalCollectionDetail
+      responses:
+        200:
+          description: Success
 
 
 
