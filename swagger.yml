@@ -1,0 +1,108 @@
+consumes:
+- application/json
+info:
+  title: Feedly
+  version: 3.0.0
+produces:
+- application/json
+schemes:
+- https
+swagger: "2.0"
+host: "cloud.feedly.com"
+basePath: "/v3"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  Board:
+    type: object
+    required:
+      - id
+      - created
+      - label
+      - customizable
+      - enterprise
+    properties:
+      id:
+        type: string
+      label:
+        type: string
+      description:
+        type: string
+      created:
+        type: integer
+      customizable:
+        type: boolean
+      enterprise:
+        type: boolean
+      cover:
+        type: string
+      isPublic:
+        type: boolean
+      showNotes:
+        type: boolean
+      showHighlights:
+        type: boolean
+      htmlUrl:
+        type: string
+      streamId:
+        type: string
+
+  UpdateBoard:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      label:
+        type: string
+      description:
+        type: string
+
+paths:
+  /boards:
+    get:
+      tags:
+        - boards
+      responses:
+        200:
+          description: Get the list of boards
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Board"
+    post:
+      tags:
+        - boards
+      responses:
+        200:
+          description: Update a board
+          schema:
+            type: object
+            $ref:  "#/definitions/UpdateBoard"
+        403:
+          description: the board id passed doesn’t match the logged-in user id
+
+  /boards/{tagId}:
+    parameters:
+      - name: tagId
+        in: path
+        required: true
+        type: string
+      - name: cover
+        in: formData
+        type: file
+        required: true
+    post:
+      tags:
+        - boards
+      responses:
+        200:
+          description: Upload a new cover image
+
+
+
+
